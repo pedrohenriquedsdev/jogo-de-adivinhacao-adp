@@ -3,15 +3,9 @@
 //2. Nosso jogo deve gerar um número secreto aleatório.
 //3. Nosso jogo deve validar a tentativa do jogador e exibir uma mensagem.
 
-using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Security.Cryptography; //Quero usar a biblioteca padrão do sistema relacionada a criptografia.
 
-bool deveContinuar = true;
-
-while (deveContinuar)
+while (true)
 {
     Console.Clear();
 
@@ -45,10 +39,10 @@ while (deveContinuar)
 
     }
 
-    Console.WriteLine("Desejea Continuar? (S/N): ");
+    Console.WriteLine("Deseja Continuar? (S/N): ");
     string? opcaoContinuar = Console.ReadLine();
 
-    if (opcaoContinuar.ToUpper() != "S")
+    if (opcaoContinuar?.ToUpper() != "S") //
     {
         break;
     }
