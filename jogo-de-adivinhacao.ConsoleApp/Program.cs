@@ -9,6 +9,7 @@
 // v2
 // 1. Nosso jogo deve implementar a funcionalidade de Dificuldade e Tentativas limitadas
 // 2. Nosso jogo deve umplementar uma funcionalidade de Validação de Números Repetidos
+// 3. Nosso jogo deve mplementar uma funcionalidade de Pontuação
 
 using System; // biblioteca padrão do sistema com classes genéricas
 using System.Security.Cryptography; // biblioteca padrão do sistema relacionada a criptografia
@@ -17,6 +18,7 @@ while (true == true)
 {
     int[] numerosDigitados = new int[100];
     int contadorNumerosDigitados = 0;
+    int pontuacao = 1000;
 
     Console.Clear();
 
@@ -127,14 +129,32 @@ while (true == true)
             Console.WriteLine("------------------------------------");
         }
 
+        int diferencaNumerica = Math.Abs(numeroAleatorio - numeroDigitado); // 90 - 100 = 10;
+
+        if (diferencaNumerica >= 10)
+        {
+            pontuacao -= 100;
+        }
+        else if (diferencaNumerica >= 5)
+        {
+            pontuacao -= 50;
+        }
+        else
+        {
+            pontuacao -= 20;
+        }
+
+        Console.WriteLine("Sua pontuação é: " + pontuacao);
+        Console.WriteLine("------------------------------------");
+        Console.Write("Digite ENTER para continuar...");
+        Console.ReadLine();
+
         if (tentativa == tentativasMaximas)
         {
             Console.WriteLine($"Você usou todas as suas tentativas! O número era {numeroAleatorio}.");
             Console.WriteLine("------------------------------------");
             break;
         }
-
-        Console.ReadLine();
     }
 
     Console.Write("Deseja continuar? (s/N): ");
