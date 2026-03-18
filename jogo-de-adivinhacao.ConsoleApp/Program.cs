@@ -1,17 +1,4 @@
-﻿// Objetivos / Passo-a-passo
-
-// v1
-// 1. Nosso jogo deve aceitar o input do jogador e exibir o valor digitado [x]  
-// 2. Nosso jogo deve gerar um número aleatório [x]  
-// 3. Nosso jogo deve validar a tentativa do jogador e exibir uma mensagem [x]  
-// 4. Nosso jogo deve permitir múltiplas tentativas [x] 
-
-// v2
-// 1. Nosso jogo deve implementar a funcionalidade de Dificuldade e Tentativas limitadas [X] 
-// 2. Nosso jogo deve implementar a funcionalidade de Validação de Números Repetidos [X] 
-// 3. Nosso jogo deve implementar a funcionalidade de Pontuação [X] 
-
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
 class Program
 {
@@ -19,16 +6,15 @@ class Program
     {
         while (true)
         {
-            //Exibir Menu
             string? dificuldadeEscolhida = ExibirMenuDoJogo();
 
-            //Configurar o jogo
             int[] configuracoes = ExibirJogoConformeDificuldade(dificuldadeEscolhida);
             int numeroAleatorio = configuracoes[0];
             int totalDeTentativas = configuracoes[1];
             int numeroMaximo = configuracoes[2];
 
-            //Validações / In game
+            if (numeroMaximo == 0) continue;
+
             int tentativaAtual = 0;
             int[] listaDeNumerosDigitados = new int[numeroMaximo - 1];
 
@@ -37,72 +23,93 @@ class Program
                 string? dadoDeEntrada = EntradaDoJogador(numeroMaximo);
                 int dadoDeEntradaConvertido = ConverterEntradaDoJogador(dadoDeEntrada);
 
-                // 1. Inválido? Não conta
                 if (dadoDeEntradaConvertido == 0) continue;
 
-                // 2. Repetido? Não conta
                 bool dadoExistenteNaLista = false;
                 for (int i = 0; i < listaDeNumerosDigitados.Length; i++)
                 {
                     if (listaDeNumerosDigitados[i] == dadoDeEntradaConvertido)
                     {
-                        Console.WriteLine($"{dadoDeEntradaConvertido} já está na lista!");
+                        ExibirMensagem($"⚠  O número {dadoDeEntradaConvertido} já foi tentado!", ConsoleColor.Yellow);
                         dadoExistenteNaLista = true;
                         break;
                     }
                 }
                 if (dadoExistenteNaLista) continue;
 
-                // 3. Tudo certo — agora salva, incrementa e valida
                 listaDeNumerosDigitados[dadoDeEntradaConvertido - 1] = dadoDeEntradaConvertido;
                 tentativaAtual++;
 
                 bool jogadorAcertou = ValidarTentativaDoJogador(
                     dadoDeEntradaConvertido, numeroAleatorio, tentativaAtual, totalDeTentativas);
 
-                Console.WriteLine($"{tentativaAtual} de {totalDeTentativas}");
-                // 4. Pontuar Jogador Baseado em Acertos e Posicões
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine($"  Tentativa {tentativaAtual} de {totalDeTentativas}");
+                Console.ResetColor();
+
                 int pontosDoJogador = PontuarJogador(dadoDeEntradaConvertido, numeroAleatorio);
 
                 if (jogadorAcertou)
                 {
-                    Console.WriteLine($"Pontuação final: {pontosDoJogador}");
+                    Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("  ★ ═══════════════════════════════ ★");
+                    Console.WriteLine($"         PONTUAÇÃO FINAL: {pontosDoJogador} pts");
+                    Console.WriteLine("  ★ ═══════════════════════════════ ★");
+                    Console.ResetColor();
+                    Console.WriteLine();
                     break;
                 }
-
             }
 
-            Console.Write("Deseja continuar? (s/N): ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("\n  Deseja jogar novamente? (s/N): ");
+            Console.ResetColor();
             string? opcaoContinuar = Console.ReadLine();
 
             if (opcaoContinuar?.ToUpper() != "S")
             {
+                Console.WriteLine();
+                ExibirMensagem("  Obrigado por jogar! Até a próxima. 👋", ConsoleColor.Cyan);
+                Console.WriteLine();
                 break;
             }
         }
+    }
 
-
+    static void ExibirMensagem(string mensagem, ConsoleColor cor)
+    {
+        Console.ForegroundColor = cor;
+        Console.WriteLine(mensagem);
+        Console.ResetColor();
     }
 
     static string? ExibirMenuDoJogo()
     {
-        string tituloDoJogo = "JOGO DA ADIVINHAÇÃO";
-        string linha = new string('=', tituloDoJogo.Length); //Construtor
+        Console.Clear();
+        string tituloDoJogo = "  JOGO DA ADIVINHAÇÃO";
+        string linha = "  " + new string('═', tituloDoJogo.Length - 2);
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
         Console.WriteLine(linha);
         Console.WriteLine(tituloDoJogo);
         Console.WriteLine(linha);
+        Console.ResetColor();
 
-        Console.WriteLine("\nEscolha um nível de dificuldade:");
-        Console.WriteLine("------------------------------------");
-        Console.WriteLine("1 - Fácil (10 tentativas)");
-        Console.WriteLine("2 - Médio (5 tentativas)");
-        Console.WriteLine("3 - Difícil (3 tentativas)");
-        Console.WriteLine("------------------------------------");
+        Console.WriteLine();
+        Console.WriteLine("  Escolha um nível de dificuldade:");
+        Console.WriteLine();
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("  [1] Fácil   → 1 a 20  | 10 tentativas");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("  [2] Médio   → 1 a 50  |  5 tentativas");
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("  [3] Difícil → 1 a 70  |  3 tentativas");
+        Console.ResetColor();
+        Console.WriteLine();
 
-        Console.Write("Digite sua escolha: ");
-        string? dificuldadeEscolhida = Console.ReadLine();
-
-        return dificuldadeEscolhida;
+        Console.Write("  Digite sua escolha: ");
+        return Console.ReadLine();
     }
 
     static int[] ExibirJogoConformeDificuldade(string? dificuldadeEscolhida)
@@ -117,26 +124,26 @@ class Program
             case "1":
                 totalDeTentativas = 10;
                 numeroMaximo = 21;
-                Console.WriteLine($"Você terá {totalDeTentativas} tentativas para adivinhar um número de 1 a {numeroMaximo - 1}.");
                 break;
-
             case "2":
                 totalDeTentativas = 5;
                 numeroMaximo = 51;
-                Console.WriteLine($"Você terá {totalDeTentativas} tentativas para adivinhar um número de 1 a {numeroMaximo - 1}.");
                 break;
-
             case "3":
                 totalDeTentativas = 3;
                 numeroMaximo = 71;
-                Console.WriteLine($"Você terá {totalDeTentativas} tentativas para adivinhar um número de 1 a {numeroMaximo - 1}.");
                 break;
-
             default:
-                Console.WriteLine("Dificuldade inválida.");
+                ExibirMensagem("  ✗ Dificuldade inválida. Tente novamente.", ConsoleColor.Red);
                 Console.ReadLine();
                 return new int[3];
         }
+
+        Console.WriteLine();
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"  Adivinhe o número entre 1 e {numeroMaximo - 1}. Você tem {totalDeTentativas} tentativas!");
+        Console.ResetColor();
+        Console.WriteLine();
 
         numeroAleatorio = RandomNumberGenerator.GetInt32(1, numeroMaximo);
         configuracoes[0] = numeroAleatorio;
@@ -147,34 +154,22 @@ class Program
 
     static string? EntradaDoJogador(int numeroMaximo)
     {
-        Console.Write($"Digite um número entre 1 e {numeroMaximo - 1}: ");
-        string? dadoDeEntrada = Console.ReadLine()!;
-
-        return dadoDeEntrada;
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.Write($"  › Digite um número (1 a {numeroMaximo - 1}): ");
+        Console.ResetColor();
+        return Console.ReadLine();
     }
 
     static int ConverterEntradaDoJogador(string? dadoDeEntrada)
     {
-
         if (string.IsNullOrWhiteSpace(dadoDeEntrada))
-        {
-            Console.WriteLine("ERRO! Espaços em branco ou valores nulos não serão permitidos.");
-        }
-
+            ExibirMensagem("  ✗ Entrada vazia não é permitida.", ConsoleColor.Red);
         else if (dadoDeEntrada == "0")
-        {
-            Console.WriteLine("Valor 0 não é aceito. Digite um valor válido!");
-        }
-
+            ExibirMensagem("  ✗ O número 0 não é aceito.", ConsoleColor.Red);
         else if (int.TryParse(dadoDeEntrada, out int dadoDeEntradaConvertido))
-        {
             return dadoDeEntradaConvertido;
-        }
-
         else
-        {
-            Console.WriteLine("Por favor insira apenas números e não letras!");
-        }
+            ExibirMensagem("  ✗ Digite apenas números!", ConsoleColor.Red);
 
         return 0;
     }
@@ -183,30 +178,21 @@ class Program
     {
         if (dadoDeEntradaConvertido == numeroAleatorio)
         {
-            Console.WriteLine("PARABÉNS! Você acertou o número aleatório!");
+            ExibirMensagem("  ✔ PARABÉNS! Você acertou!", ConsoleColor.Green);
             return true;
         }
         else if (dadoDeEntradaConvertido > numeroAleatorio)
-        {
-            Console.WriteLine("------------------------------------");
-            Console.WriteLine("O número digitado foi maior que o número secreto!");
-            Console.WriteLine("------------------------------------");
-        }
+            ExibirMensagem("  ↓ Muito alto! O número secreto é menor.", ConsoleColor.Yellow);
         else
-        {
-            Console.WriteLine("------------------------------------");
-            Console.WriteLine("O número digitado foi menor que o número secreto!");
-            Console.WriteLine("------------------------------------");
-        }
+            ExibirMensagem("  ↑ Muito baixo! O número secreto é maior.", ConsoleColor.Yellow);
 
         if (tentativaAtual == totalDeTentativas)
         {
-            Console.WriteLine($"Você usou todas as tentativas. O número era {numeroAleatorio}.");
-            Console.WriteLine("------------------------------------");
+            Console.WriteLine();
+            ExibirMensagem($"  ✗ Suas tentativas acabaram! O número era {numeroAleatorio}.", ConsoleColor.Red);
         }
 
         return false;
-
     }
 
     static int PontuarJogador(int dadoDeEntradaConvertido, int numeroAleatorio)
@@ -214,19 +200,15 @@ class Program
         int pontuacao = 1000;
         int diferencaEntreDados = Math.Abs(dadoDeEntradaConvertido - numeroAleatorio);
 
-        if (diferencaEntreDados == 0)       // acerto exato → 1000 pontos
+        if (diferencaEntreDados == 0)
             return pontuacao;
-
         else if (diferencaEntreDados > 10)
             pontuacao -= 100;
-
         else if (diferencaEntreDados >= 5)
             pontuacao -= 50;
-
         else
             pontuacao -= 20;
 
         return pontuacao;
     }
-
 }
