@@ -47,10 +47,9 @@ class Program
                 Console.WriteLine($"  Tentativa {tentativaAtual} de {totalDeTentativas}");
                 Console.ResetColor();
 
-                int pontosDoJogador = PontuarJogador(dadoDeEntradaConvertido, numeroAleatorio);
-
                 if (jogadorAcertou)
                 {
+                    int pontosDoJogador = PontuarJogador(tentativaAtual, totalDeTentativas);
                     Console.WriteLine();
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("  ★ ═══════════════════════════════ ★");
@@ -195,20 +194,10 @@ class Program
         return false;
     }
 
-    static int PontuarJogador(int dadoDeEntradaConvertido, int numeroAleatorio)
+    static int PontuarJogador(int tentativaAtual, int totalDeTentativas)
     {
         int pontuacao = 1000;
-        int diferencaEntreDados = Math.Abs(dadoDeEntradaConvertido - numeroAleatorio);
-
-        if (diferencaEntreDados == 0)
-            return pontuacao;
-        else if (diferencaEntreDados > 10)
-            pontuacao -= 100;
-        else if (diferencaEntreDados >= 5)
-            pontuacao -= 50;
-        else
-            pontuacao -= 20;
-
-        return pontuacao;
+        pontuacao -= (tentativaAtual - 1) * (1000 / totalDeTentativas);
+        return Math.Max(pontuacao, 0);
     }
 }
