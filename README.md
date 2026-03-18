@@ -1,8 +1,9 @@
-Aqui vai um README direto, profissional e pronto pra usar 👇
 
 ---
 
 # 🎯 Jogo da Adivinhação (C# Console)
+
+![](/docs/WindowsTerminal_dkz5wzkvWw.gif)
 
 Um jogo simples de adivinhação desenvolvido em **C#**, com foco em lógica, validações e estrutura de código.
 
