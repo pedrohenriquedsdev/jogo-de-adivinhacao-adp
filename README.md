@@ -110,5 +110,3 @@ Pedro Henrique dos Santos -
 Focado em evolução como **Dev Backend C# .NET**
 
 ---
-
-Se quiser, posso transformar isso em um README mais “nível GitHub top” com badges, gif do jogo rodando e layout mais chamativo.
